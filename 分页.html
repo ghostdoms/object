@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    span {
+        display: inline-block;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        float: left;
+    }
+    
+    span:last-child {
+        margin-left: 5px;
+    }
+    
+    ul {
+        display: block;
+        height: 30px;
+        width: 20 0px;
+        float: left;
+    }
+    
+    ul li {
+        float: left;
+        list-style: none;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin-left: 5px;
+    }
+    
+    ul li.active {
+        background-color: #00baf2;
+        color: #fff;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="wrap"></div>
+    <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <script>
+    var pagination = new page({
+        "total": 45,
+        "initnum": 1,
+        "pagesize": 12,
+        "element": 'wrap'
+    })
+    pagination.init();
+
+    function page(obj) {
+        var that = this;
+        that.total = obj.total;
+        that.num = obj.initnum;
+        that.pagesize = obj.pagesize;
+        that.element = obj.element;
+        //初始化
+        that.init = function() {
+            $('.' + that.element).html(`<span class="prev">prev</span><ul class="box"></ul><span class="next">next</span>`)
+            that.initnum(that.num);
+            that.cli();
+        };
+        //点击效果
+        that.cli = function() {
+            $('.box').delegate('li', 'click', function(e) {
+                $(this).addClass('active').siblings().removeClass('active');
+                that.initnum($(this).text());
+            });
+        };
+        //初始页码函数
+        that.initnum = function(num) {
+            num = parseInt(num);
+            var str = ``;
+            if (that.total < that.pagesize) {
+                for (var i = 1; i < that.total; i++) {
+                    if (i == num) str += `<li class="active">${i}</li>`
+                    else str += `<li>${i}</li>`
+                };
+            } else if (num < 5) {
+                for (var i = 1; i < that.pagesize + 1; i++) {
+                    if (i == num) str += `<li class="active">${i}</li>`
+                    else str += `<li>${i}</li>`
+                };
+            } else if (num + 6 > that.total) {
+                for (var i = num - (Math.ceil(that.pagesize / 2) - 1); i < that.total; i++) {
+                    if (i == num) str += `<li class="active">${i}</li>`
+                    else str += `<li>${i}</li>`
+                }
+            } else {
+                for (var i = num - (Math.ceil(that.pagesize / 2) - 1); i < num + (Math.ceil(that.pagesize / 2) + 1); i++) {
+                    if (i == num) str += `<li class="active">${i}</li>`
+                    else str += `<li>${i}</li>`
+                }
+            };
+            $('.box').html(str);
+            that.prev(num);
+            that.next(num);
+        };
+        that.prev = function(num) {
+
+            $('.prev').on('click', function() {
+                if (num <= 1) {
+                    num = 1
+                } else {
+                    num--
+                };
+                that.initnum(num);
+            });
+        };
+        that.next = function(num) {
+
+            $('.next').on('click', function() {
+                if (num >= that.total) {
+                    num = that.total
+                } else {
+                    num++
+                };
+                that.initnum(num);
+            });
+        };
+    }
+    </script>
+</body>
+
+</html>
